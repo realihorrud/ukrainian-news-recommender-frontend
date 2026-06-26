@@ -1,14 +1,18 @@
+import { Eye } from 'lucide-react'
 import { useState } from 'react'
 import type { Article } from '../types'
 import CategoryBadge from './CategoryBadge'
 import MatchScoreBar from './MatchScoreBar'
+import { useApi } from '../hooks/useApi'
 
 type ArticleCardProps = {
   article: Article
   showMatchScore?: boolean
-  onRate: (articleId: number, rating: 1 | -1) => Promise<void>
-  onRemoved: (articleId: number) => void
+  onRate: (articleId: number, rating: 1 | -1) => void
+  onRead: (articleId: number) => void
 }
+
+const DISMISS_DELAY_MS = 300
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('uk-UA', {
@@ -20,28 +24,47 @@ function formatDate(dateStr: string): string {
 
 export default function ArticleCard({
   article,
-  showMatchScore = false,
   onRate,
-  onRemoved,
+  onRead,
 }: ArticleCardProps) {
+  const { apiFetch } = useApi()
   const [removing, setRemoving] = useState(false)
-  const [rating, setRating] = useState(false)
 
-  const handleRate = async (value: 1 | -1) => {
-    if (rating || removing) return
-    setRating(true)
-    try {
-      await onRate(article.id, value)
-      setRemoving(true)
-      setTimeout(() => onRemoved(article.id), 300)
-    } catch {
-      setRating(false)
-    }
+  const startDismiss = () => {
+    setRemoving(true)
+    window.setTimeout(() => onRead(article.id), DISMISS_DELAY_MS)
+  }
+
+  const handleRate = (value: 1 | -1) => {
+    if (removing) return
+    onRate(article.id, value)
+    startDismiss()
+  }
+
+  const handleMarkAsRead = () => {
+    if (removing) return
+    void apiFetch(`/articles/${article.id}/read`, { method: 'POST' }).catch(
+      (error) => {
+        console.error('Failed to mark article as read', error)
+      },
+    )
+    startDismiss()
+  }
+
+  const handleTitleClick = () => {
+    if (removing) return
+    void apiFetch(`/articles/${article.id}/read`, { method: 'POST' }).catch(
+      (error) => {
+        console.error('Failed to mark article as read', error)
+      },
+    )
+    startDismiss()
+    window.open(article.url, '_blank')
   }
 
   return (
     <article
-      className={`rounded-lg border border-zinc-800 bg-zinc-900/50 p-5 transition-colors hover:border-zinc-700 ${
+      className={`rounded-lg border border-zinc-200 bg-white p-5 shadow-sm transition-colors hover:border-zinc-300 ${
         removing ? 'animate-fade-out pointer-events-none' : ''
       }`}
     >
@@ -53,46 +76,69 @@ export default function ArticleCard({
         </span>
       </div>
 
-      <a
-        href={article.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block text-base font-medium leading-snug text-zinc-100 transition-colors hover:text-white"
+      <button
+        type="button"
+        onClick={handleTitleClick}
+        className="block w-full cursor-pointer text-left text-base font-medium leading-snug text-zinc-900 transition-colors hover:text-violet-700"
       >
         {article.title}
-      </a>
-
-      {showMatchScore && article.match_score !== null && (
-        <MatchScoreBar score={article.match_score} />
-      )}
+      </button>
 
       {article.summary && (
-        <p className="mt-2 line-clamp-2 text-sm text-zinc-500" dangerouslySetInnerHTML={{__html: article.summary}}></p>
+        <p
+          className="mt-2 line-clamp-2 text-sm text-zinc-600"
+          dangerouslySetInnerHTML={{ __html: article.summary }}
+        />
       )}
 
-      <div className="mt-4 flex gap-2">
+      <div className="mt-4 flex items-center gap-2">
         <button
           type="button"
-          onClick={() => handleRate(1)}
-          disabled={rating || removing}
-          className="flex items-center gap-1.5 rounded-md border border-zinc-800 px-3 py-1.5 text-sm text-zinc-500 transition-colors hover:border-emerald-500/30 hover:bg-emerald-500/10 hover:text-emerald-400 disabled:opacity-50 cursor-pointer"
+          onClick={handleMarkAsRead}
+          disabled={removing}
+          aria-label="Mark as read"
+          className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 disabled:opacity-50"
         >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
-          </svg>
-          Upvote
+          <Eye className="h-4 w-4" />
+          <span className="hidden sm:inline">Mark as read</span>
         </button>
-        <button
-          type="button"
-          onClick={() => handleRate(-1)}
-          disabled={rating || removing}
-          className="flex items-center gap-1.5 rounded-md border border-zinc-800 px-3 py-1.5 text-sm text-zinc-500 transition-colors hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-400 disabled:opacity-50 cursor-pointer"
-        >
-          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
-          Downvote
-        </button>
+
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => handleRate(1)}
+            disabled={removing}
+            className="cursor-pointer flex items-center gap-1.5 rounded-md border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700 disabled:opacity-50"
+          >
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+            </svg>
+            Upvote
+          </button>
+          <button
+            type="button"
+            onClick={() => handleRate(-1)}
+            disabled={removing}
+            className="cursor-pointer flex items-center gap-1.5 rounded-md border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:border-red-200 hover:bg-red-50 hover:text-red-700 disabled:opacity-50"
+          >
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+            Downvote
+          </button>
+        </div>
       </div>
     </article>
   )

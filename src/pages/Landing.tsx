@@ -2,20 +2,20 @@ import { SignInButton } from '@clerk/react'
 
 export default function Landing() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-950 px-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-white px-4">
       <div className="mx-auto max-w-lg text-center">
-        <h1 className="mb-4 text-4xl font-semibold tracking-tight text-zinc-50">
+        <h1 className="mb-4 text-4xl font-semibold tracking-tight text-zinc-900">
           🇺🇦 Ukrainian News Recommender
         </h1>
 
-        <p className="mb-10 text-lg text-zinc-400">
+        <p className="mb-10 text-lg text-zinc-600">
           Your personalized feed of Ukrainian news, ranked to match your interests.
         </p>
 
         <SignInButton mode="modal">
           <button
             type="button"
-            className="inline-flex items-center gap-3 rounded-lg border border-zinc-700 bg-zinc-900 px-6 py-3 text-sm font-medium text-zinc-100 transition-colors hover:border-zinc-600 hover:bg-zinc-800"
+            className="inline-flex items-center gap-3 rounded-lg border border-zinc-200 bg-white px-6 py-3 text-sm font-medium text-zinc-900 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50"
           >
             <svg className="h-5 w-5" viewBox="0 0 24 24">
               <path

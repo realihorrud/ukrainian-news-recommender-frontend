@@ -53,35 +53,35 @@ export default function Stats() {
     })) ?? []
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <h1 className="mb-8 text-xl font-semibold text-zinc-100">Your Stats</h1>
+        <h1 className="mb-8 text-xl font-semibold text-zinc-900">Your Stats</h1>
 
         {loading && (
           <div className="flex justify-center py-16">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-700 border-t-violet-500" />
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-200 border-t-violet-500" />
           </div>
         )}
 
         {error && (
-          <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+          <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
           </p>
         )}
 
         {stats && !loading && (
           <div className="flex flex-col gap-8">
-            <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-6">
+            <div className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
               <p className="mb-1 text-sm text-zinc-500">Total articles rated</p>
-              <p className="text-4xl font-semibold text-zinc-100">
+              <p className="text-4xl font-semibold text-zinc-900">
                 {stats.total_rated}
               </p>
             </div>
 
-            <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 p-6">
-              <h2 className="mb-4 text-sm font-medium text-zinc-400">
+            <div className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm">
+              <h2 className="mb-4 text-sm font-medium text-zinc-700">
                 Top categories
               </h2>
 
@@ -97,8 +97,8 @@ export default function Stats() {
                         key={cat.name}
                         className="flex items-center justify-between"
                       >
-                        <span className="flex items-center gap-2 text-sm text-zinc-300">
-                          <span className="text-xs text-zinc-600">#{i + 1}</span>
+                        <span className="flex items-center gap-2 text-sm text-zinc-700">
+                          <span className="text-xs text-zinc-500">#{i + 1}</span>
                           {cat.name}
                         </span>
                         <span className="text-sm text-zinc-500">{cat.count}</span>
@@ -112,25 +112,25 @@ export default function Stats() {
                         <BarChart data={chartData} barSize={32}>
                           <XAxis
                             dataKey="name"
-                            tick={{ fill: '#71717a', fontSize: 12 }}
-                            axisLine={{ stroke: '#3f3f46' }}
+                            tick={{ fill: '#52525b', fontSize: 12 }}
+                            axisLine={{ stroke: '#e4e4e7' }}
                             tickLine={false}
                           />
                           <YAxis
-                            tick={{ fill: '#71717a', fontSize: 12 }}
-                            axisLine={{ stroke: '#3f3f46' }}
+                            tick={{ fill: '#52525b', fontSize: 12 }}
+                            axisLine={{ stroke: '#e4e4e7' }}
                             tickLine={false}
                             allowDecimals={false}
                           />
                           <Tooltip
                             contentStyle={{
                               backgroundColor: '#ffffff',
-                              border: '1px solid #3f3f46',
+                              border: '1px solid #e4e4e7',
                               borderRadius: '8px',
-                              color: '#8b5cf6',
+                              color: '#18181b',
                               fontSize: '13px',
                             }}
-                            cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                            cursor={{ fill: 'rgba(0,0,0,0.03)' }}
                           />
                           <Bar dataKey="count" radius={[4, 4, 0, 0]} />
                         </BarChart>

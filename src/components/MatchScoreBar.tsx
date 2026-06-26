@@ -11,7 +11,7 @@ export default function MatchScoreBar({ score }: MatchScoreBarProps) {
         <span>Match</span>
         <span>{percent}%</span>
       </div>
-      <div className="h-1 w-full overflow-hidden rounded-full bg-zinc-800">
+      <div className="h-1 w-full overflow-hidden rounded-full bg-zinc-200">
         <div
           className="h-full rounded-full bg-violet-500 transition-all duration-500"
           style={{ width: `${percent}%` }}

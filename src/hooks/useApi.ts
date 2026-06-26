@@ -29,7 +29,18 @@ export function useApi() {
         throw new Error(`API error: ${response.status}`)
       }
 
-      return response.json() as Promise<T>
+      if (response.status === 204) {
+        return undefined as T
+      }
+
+      const responseText = await response.text()
+      const trimmedText = responseText.trim()
+
+      if (!trimmedText) {
+        return undefined as T
+      }
+
+      return JSON.parse(trimmedText) as T
     },
     [getToken],
   )

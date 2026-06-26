@@ -38,41 +38,43 @@ export default function Feed() {
   }, [apiFetch])
 
   const handleRate = useCallback(
-    async (articleId: number, rating: 1 | -1) => {
-      await apiFetch<RatingResponse>('/ratings', {
+    (articleId: number, rating: 1 | -1) => {
+      void apiFetch<RatingResponse>('/ratings', {
         method: 'POST',
         body: JSON.stringify({ article_id: articleId, rating }),
+      }).catch((error) => {
+        console.error('Failed to rate article', error)
       })
     },
     [apiFetch],
   )
 
-  const handleRemoved = useCallback((articleId: number) => {
+  const handleDismiss = useCallback((articleId: number) => {
     setArticles((prev) => prev.filter((a) => a.id !== articleId))
   }, [])
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
       <main className="mx-auto max-w-3xl px-4 py-8">
-        <h1 className="mb-6 text-xl font-semibold text-zinc-100">Your Feed</h1>
+        <h1 className="mb-6 text-xl font-semibold text-zinc-900">Your Feed</h1>
 
         {loading && (
           <div className="flex justify-center py-16">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-700 border-t-violet-500" />
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-200 border-t-violet-500" />
           </div>
         )}
 
         {error && (
-          <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+          <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
           </p>
         )}
 
         {!loading && !error && articles.length === 0 && (
-          <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 px-6 py-12 text-center">
-            <p className="text-zinc-400">
+          <div className="rounded-lg border border-zinc-200 bg-white px-6 py-12 text-center shadow-sm">
+            <p className="text-zinc-600">
               Rate more articles in Browse to improve your feed
             </p>
           </div>
@@ -83,9 +85,8 @@ export default function Feed() {
             <ArticleCard
               key={article.id}
               article={article}
-              showMatchScore
               onRate={handleRate}
-              onRemoved={handleRemoved}
+              onRead={handleDismiss}
             />
           ))}
         </div>

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import ArticleCard from '../components/ArticleCard'
 import Navbar from '../components/Navbar'
@@ -10,8 +10,8 @@ export default function Browse() {
   const [articles, setArticles] = useState<Article[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const totalRef = useRef(0)
-  const [ratedCount, setRatedCount] = useState(0)
+  const [total, setTotal] = useState(0)
+  const [reviewedCount, setReviewedCount] = useState(0)
 
   useEffect(() => {
     let cancelled = false
@@ -20,7 +20,7 @@ export default function Browse() {
       try {
         const data = await apiFetch<BrowseResponse>('/browse?per_source=4')
         if (!cancelled) {
-          totalRef.current = data.articles.length
+          setTotal(data.articles.length)
           setArticles(data.articles)
         }
       } catch {
@@ -41,52 +41,53 @@ export default function Browse() {
   }, [apiFetch])
 
   const handleRate = useCallback(
-    async (articleId: number, rating: 1 | -1) => {
-      await apiFetch<RatingResponse>('/ratings', {
+    (articleId: number, rating: 1 | -1) => {
+      void apiFetch<RatingResponse>('/ratings', {
         method: 'POST',
         body: JSON.stringify({ article_id: articleId, rating }),
+      }).catch((error) => {
+        console.error('Failed to rate article', error)
       })
     },
     [apiFetch],
   )
 
-  const handleRemoved = useCallback((articleId: number) => {
+  const handleDismiss = useCallback((articleId: number) => {
     setArticles((prev) => prev.filter((a) => a.id !== articleId))
-    setRatedCount((prev) => prev + 1)
+    setReviewedCount((prev) => prev + 1)
   }, [])
 
-  const total = totalRef.current
-  const allRated = !loading && total > 0 && articles.length === 0
+  const allReviewed = !loading && total > 0 && articles.length === 0
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
       <main className="mx-auto max-w-3xl px-4 py-8">
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-zinc-100">Browse & Rate</h1>
+          <h1 className="text-xl font-semibold text-zinc-900">Browse & Rate</h1>
           {!loading && total > 0 && (
             <span className="text-sm text-zinc-500">
-              {ratedCount} / {total} rated
+              {reviewedCount} / {total} reviewed
             </span>
           )}
         </div>
 
         {loading && (
           <div className="flex justify-center py-16">
-            <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-700 border-t-violet-500" />
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-zinc-200 border-t-violet-500" />
           </div>
         )}
 
         {error && (
-          <p className="rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+          <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}
           </p>
         )}
 
-        {allRated && (
-          <div className="rounded-lg border border-zinc-800 bg-zinc-900/50 px-6 py-12 text-center">
-            <p className="mb-4 text-zinc-300">All done!</p>
+        {allReviewed && (
+          <div className="rounded-lg border border-zinc-200 bg-white px-6 py-12 text-center shadow-sm">
+            <p className="mb-4 text-zinc-700">All done!</p>
             <Link
               to="/feed"
               className="inline-flex rounded-lg bg-violet-600 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-violet-500"
@@ -102,7 +103,7 @@ export default function Browse() {
               key={article.id}
               article={article}
               onRate={handleRate}
-              onRemoved={handleRemoved}
+              onRead={handleDismiss}
             />
           ))}
         </div>

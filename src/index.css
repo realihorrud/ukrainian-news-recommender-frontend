@@ -4,9 +4,14 @@
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
+html {
+  @apply bg-white;
+}
+
 body {
-  @apply bg-zinc-950 text-zinc-300 antialiased;
+  @apply bg-white text-zinc-900 antialiased;
   font-family: var(--font-sans);
+  color-scheme: light;
 }
 
 @keyframes fade-out {
