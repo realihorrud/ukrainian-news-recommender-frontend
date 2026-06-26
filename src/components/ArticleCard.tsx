@@ -2,7 +2,6 @@ import { Eye } from 'lucide-react'
 import { useState } from 'react'
 import type { Article } from '../types'
 import CategoryBadge from './CategoryBadge'
-import MatchScoreBar from './MatchScoreBar'
 import { useApi } from '../hooks/useApi'
 
 type ArticleCardProps = {
