@@ -1,4 +1,3 @@
-import { Eye } from 'lucide-react'
 import { useState } from 'react'
 import type { Article } from '../types'
 import CategoryBadge from './CategoryBadge'
@@ -37,16 +36,6 @@ export default function ArticleCard({
   const handleRate = (value: 1 | -1) => {
     if (removing) return
     onRate(article.id, value)
-    startDismiss()
-  }
-
-  const handleMarkAsRead = () => {
-    if (removing) return
-    void apiFetch(`/articles/${article.id}/read`, { method: 'POST' }).catch(
-      (error) => {
-        console.error('Failed to mark article as read', error)
-      },
-    )
     startDismiss()
   }
 
@@ -91,17 +80,6 @@ export default function ArticleCard({
       )}
 
       <div className="mt-4 flex items-center gap-2">
-        <button
-          type="button"
-          onClick={handleMarkAsRead}
-          disabled={removing}
-          aria-label="Mark as read"
-          className="inline-flex items-center gap-1.5 rounded-md border border-zinc-200 px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 disabled:opacity-50"
-        >
-          <Eye className="h-4 w-4" />
-          <span className="hidden sm:inline">Mark as read</span>
-        </button>
-
         <div className="flex gap-2">
           <button
             type="button"
