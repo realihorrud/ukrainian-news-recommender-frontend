@@ -94,9 +94,14 @@ export default function ArticleCard({
               stroke="currentColor"
               strokeWidth={2}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M14 9V5a3 3 0 0 0-3-3l-1 4-3 3v11h11.28a2 2 0 0 0 1.977-1.694l1-7A2 2 0 0 0 19.28 9H14Z"
+              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M7 9H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3" />
             </svg>
-            Upvote
+            Like
           </button>
           <button
             type="button"
@@ -111,9 +116,14 @@ export default function ArticleCard({
               stroke="currentColor"
               strokeWidth={2}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10 15v4a3 3 0 0 0 3 3l1-4 3-3V4H5.72a2 2 0 0 0-1.977 1.694l-1 7A2 2 0 0 0 4.72 15H10Z"
+              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17 15h3a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-3" />
             </svg>
-            Downvote
+            Dislike
           </button>
         </div>
       </div>
