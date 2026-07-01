@@ -16,6 +16,7 @@ export type CategoryCount = {
 
 export type FeedResponse = {
   articles: Article[]
+  has_more: boolean
 }
 
 export type BrowseResponse = {
